@@ -17,13 +17,15 @@ public class PlayerAdvancementCompletedMixin {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    @Inject(method = "endTrackingCondition", at = @At(value = "INVOKE",
-            target = "Ljava/util/Set;remove(Ljava/lang/Object;)Z"))
-    protected void injected(PlayerAdvancementTracker manager, Criterion.ConditionsContainer conditions, CallbackInfo ci) {
+    @Inject(method = "endTrackingCondition", at = @At(value = "INVOKE", target = "Ljava/util/Set;remove"
+            + "(Ljava/lang/Object;)Z"))
+    protected void injected(PlayerAdvancementTracker manager, Criterion.ConditionsContainer conditions,
+            CallbackInfo ci) {
         var advancementOwner = ((PlayerAdvancementTrackerAccessor) manager).getOwner();
         var advancement = ((ConditionsContainerAccessor) conditions).getAdvancement();
         var progress = manager.getProgress(advancement);
-        if ("nincodedo:you_did_this".equals(advancement.getId().toString()) && progress.isDone() && !RhcFabric.isHasThisBeenDone()) {
+        if ("nincodedo:you_did_this".equals(advancement.getId().toString()) && progress.isDone()
+                && !RhcFabric.isHasThisBeenDone()) {
             RhcFabric.setHasThisBeenDone(true);
             LOGGER.trace("World is over thanks to {}", advancementOwner);
             WorldEndingCallback.EVENT.invoker().worldEndedBy(advancementOwner);
